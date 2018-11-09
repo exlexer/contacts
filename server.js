@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const logger = require('morgan');
 
+require('dotenv').config();
+
 const app = express();
 
 const router = require('./api/router');
@@ -13,9 +15,7 @@ app.use(express.static('client/dist'));
 app.use('/api', router);
 
 app.use((err, req, res, next) => {
-  if (process.env.LOADED_MOCHA_OPTS !== 'true') {
-    console.log(err);
-  }
+  console.log(err);
   if (res.headersSent) {
     return next(err);
   }

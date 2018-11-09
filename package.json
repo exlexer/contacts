@@ -7,7 +7,7 @@
     "start": "node bin/www",
     "build": "webpack",
     "dev": "webpack --watch",
-    "test:api": "mocha --exit \"./spec/api/*.js\"",
+    "test:api": "mocha --exit \"./spec/*.js\"",
     "test:client": "cypress open"
   },
   "author": "",
@@ -17,6 +17,7 @@
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.4",
     "css-loader": "^1.0.1",
+    "dotenv": "^6.1.0",
     "element-ui": "^2.4.9",
     "eslint": "^5.8.0",
     "eslint-config-airbnb": "^17.1.0",

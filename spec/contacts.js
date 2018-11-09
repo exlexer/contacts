@@ -1,15 +1,18 @@
 const request = require('supertest');
-const app = require('../../server');
+const app = require('../server');
+const { db } = require('../api/lib');
 
 describe('Contacts', () => {
   
   let server;
   
-  beforeEach(() => {
+  beforeEach(async () => {
+    db.query('begin');
     server = app.listen();
   });
   
-  afterEach(() => {
+  afterEach(async () => {
+    db.query('rollback');
     server.close();
   });
 
@@ -31,9 +34,9 @@ describe('Contacts', () => {
       .send({
         firstName: 'John',
         lastName: 'Doe',
-        dateOfBirth: '01/20/1992',
+        dob: '01/20/1992',
         addresses: [],
-        phoneNumbers: [],
+        phones: [],
         emails: ['member@example.com'],
       })
       .expect(400, done);
@@ -45,9 +48,9 @@ describe('Contacts', () => {
       .send({
         firstName: 'John',
         lastName: 'Doe',
-        dateOfBirth: '01/20/1992',
+        dob: '01/20/1992',
         addresses: [],
-        phoneNumbers: ['18012223333'],
+        phones: ['18012223333'],
         emails: [],
       })
       .expect(400, done);
@@ -59,9 +62,9 @@ describe('Contacts', () => {
       .send({
         firstName: 'John',
         lastName: 'Doe',
-        dateOfBirth: '01/20/1992',
+        dob: '01/20/1992',
         addresses: [],
-        phoneNumbers: ['18012223333'],
+        phones: ['18012223333'],
         emails: ['member@example.com'],
       })
       .expect(201, done);
