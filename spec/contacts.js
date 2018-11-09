@@ -69,4 +69,14 @@ describe('Contacts', () => {
       })
       .expect(201, done);
   });
+
+
+  it('DELETE contact succeeds', (done) => {
+    request(server)
+      .delete('/api/contacts')
+      .send({
+        id: 22,
+      })
+      .expect(204, done);
+  });
 });

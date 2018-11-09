@@ -52,6 +52,10 @@ class Contact {
     })
   }
 
+  static delete(id) {
+    return db.query('delete from contacts where id = $1', [id])
+  }
+
   _storeItems(item, id) {
     const promises = [];
 

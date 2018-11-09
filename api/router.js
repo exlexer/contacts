@@ -40,6 +40,14 @@ router.post('/contacts', (req, res, next) => {
     });
 });
 
+/* DELETE contacts. */
+router.delete('/contacts', (req, res, next) => {
+  const { id } = req.body;
+  Contact.delete(id)
+    .then(() => res.sendStatus(204))
+    .catch(err => next(err));
+});
+
 /* POST contacts. */
 router.post('/contacts/phone', (req, res, next) => {
   res.sendStatus(201);
