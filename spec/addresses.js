@@ -32,6 +32,24 @@ describe('Addresses', () => {
       });
   });
 
+  it('PATCH contact address succeeds', (done) => {
+    inputContact()
+      .then(({ address }) => {
+        request(server)
+          .patch(`/api/addresses/${address}`)
+          .send({
+            address: {
+              line1: '789 Final St',
+              line2: 'Apt 6',
+              city: 'Nowhere',
+              state: 'Okahoma',
+              country: 'USA',
+            },
+          })
+          .expect(204, done);
+      });
+  });
+
   it('DELETE contact address succeeds', (done) => {
     inputContact()
       .then(({ address }) => {

@@ -7,7 +7,8 @@ router.patch('/:id', (req, res, next) => {
   const { id } = req.params;
   const { email } = req.body;
   if (!id || !email) return res.sendStatus(400);
-  Email.getById(id).update(email)
+  Email.getById(id)
+    .then(found => found.update(email))
     .then(() => res.sendStatus(204))
     .catch(err => next(err))
 });

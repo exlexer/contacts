@@ -7,7 +7,8 @@ router.patch('/:id', (req, res, next) => {
   const { id } = req.params;
   const { address } = req.body;
   if (!id || !address) return res.sendStatus(400);
-  Address.getById(id).update(address)
+  Address.getById(id)
+    .then(found => found.update(address))
     .then(() => res.sendStatus(204))
     .catch(err => next(err))
 });

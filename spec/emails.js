@@ -26,6 +26,16 @@ describe('Emails', () => {
       });
   });
 
+  it('PATCH contact email succeeds', (done) => {
+    inputContact()
+      .then(({ email }) => {
+        request(server)
+          .patch(`/api/emails/${email}`)
+          .send({ email: 'member@another.com' })
+          .expect(204, done);
+      });
+  });
+
   it('DELETE contact email succeeds', (done) => {
     inputContact()
       .then(({ email }) => {

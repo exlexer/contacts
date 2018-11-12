@@ -26,6 +26,16 @@ describe('Phones', () => {
       });
   });
 
+  it('PATCH contact phone succeeds', (done) => {
+    inputContact()
+      .then(({ phone }) => {
+        request(server)
+          .patch(`/api/phones/${phone}`)
+          .send({ phone: '18003337777' })
+          .expect(204, done);
+      });
+  });
+
   it('DELETE contact phone succeeds', (done) => {
     inputContact()
       .then(({ phone }) => {

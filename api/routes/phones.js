@@ -16,7 +16,8 @@ router.patch('/:id', (req, res, next) => {
   const { id } = req.params;
   const { phone } = req.body;
   if (!id || !phone) return res.sendStatus(400);
-  Phone.getById(id).update(phone)
+  Phone.getById(id)
+    .then(found => found.update(phone))
     .then(() => res.sendStatus(204))
     .catch(err => next(err))
 });

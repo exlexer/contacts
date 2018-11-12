@@ -3,7 +3,7 @@ const { db } = require('../lib');
 class Email {
   constructor(email, id) {
     this.email = email;
-    this.id = id;
+    this.id = +id;
   }
 
   store(contactId) {
@@ -29,8 +29,26 @@ class Email {
     })
   }
 
+  update(email) {
+    return new Promise((resolve, reject) => {
+      const text = `
+        update emails set
+          email = $1
+        where id = $2`;
+
+      const params = [
+        email || this.email,
+        this.id,
+      ];
+      
+      db.query(text, params)
+        .then(() => resolve())
+        .catch(err => reject(err));
+    });
+  }
+
   static getById(id) {
-    return new Promise((reject, resolve) => {
+    return new Promise((resolve, reject) => {
       db.query('select * from emails where id = $1', [id])
         .then(({ email }) => resolve(new Email(email, id)))
         .catch(err => reject(err));
