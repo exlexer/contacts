@@ -41,7 +41,7 @@ class Contact {
       ];
 
       db.query(text, params)
-        .then(([{ id }]) => Promise.all([
+        .then(({ id }) => Promise.all([
           this._storeItems('addresses', id),
           this._storeItems('phones', id),
           this._storeItems('emails', id),
@@ -54,6 +54,22 @@ class Contact {
 
   static delete(id) {
     return db.query('delete from contacts where id = $1', [id])
+  }
+
+  static getAll() {
+    return new Promise((resolve, reject) => {
+      db.query(`
+        select array_to_json(array(select row_to_json(row) from (select
+          c.first_name "firstName",
+          c.last_name "lastName",
+          c.birth "dob",
+          array_to_json(array(select row_to_json(e) from (select * from emails where contact_id = c.id) e)) emails,
+          array_to_json(array(select row_to_json(p) from (select * from phones where contact_id = c.id) p)) phones,
+          array_to_json(array(select row_to_json(a) from (select * from addresses where contact_id = c.id) a)) addresses
+        from contacts c) row)) "data"`)
+      .then(({ data }) => resolve(data))
+      .catch(err => reject(err));
+    })
   }
 
   _storeItems(item, id) {

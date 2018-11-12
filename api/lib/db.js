@@ -14,7 +14,15 @@ module.exports = {
         try {
           client.query(text, params, (err, res) => {
             if (err) reject(err);
-            else resolve(res.rows);
+            else {
+              if (res.command === 'DELETE' && res.rowCount < 1) reject(new Error('no rows deleted'));
+              if (res.command === 'INSERT' && res.rowCount < 1) reject(new Error('no rows inserted'));
+              if (res.command === 'INSERT' && res.rows.length === 1) resolve(res.rows[0]);
+              if (res.command === 'INSERT' && res.rows.length > 1) resolve(res.rows);
+              if (res.command === 'SELECT' && res.rowCount === 1) resolve(res.rows[0]);
+              if (res.command === 'SELECT' && res.rowCount > 1) resolve(res.rows);
+              resolve(res);
+            };
           });
         } finally {
           client.release();

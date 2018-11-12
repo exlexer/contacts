@@ -1,4 +1,3 @@
-
 module.exports = {
   Contact: require('./Contact'),
   Address: require('./Address'),
