@@ -53,7 +53,7 @@ module.exports = {
   resolve: {
     extensions: ['*', '.js', '.vue'],
     alias: {
-      '@': path.resolve(__dirname, '.'),
+      '@': path.resolve(__dirname, 'client'),
     },
     modules: [
       path.resolve(__dirname, 'node_modules'),
