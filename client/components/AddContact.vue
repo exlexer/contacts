@@ -12,6 +12,7 @@ const newContact = () => ({
 
 export default {
   props: {
+    contact: Number,
     open: Boolean,
   },
 

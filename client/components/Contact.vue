@@ -1,10 +1,25 @@
 <script>
 import api from '@/api';
+import AddAddress from './AddAddress.vue';
+import AddEmail from './AddEmail.vue';
+import AddPhone from './AddPhone.vue';
 
 export default {
+  components: {
+    AddAddress,
+    AddEmail,
+    AddPhone,
+  },
+
   props: {
     contact: Object,
   },
+
+  data: () => ({
+    addingAddress: false,
+    addingPhone: false,
+    addingEmail: false,
+  }),
 
   methods: {
     onContactDelete() {
@@ -37,8 +52,13 @@ export default {
         {{ contact.dob }}
       </el-col>
       <el-col :span="12" style="text-align: right;">
-        <el-button @click="onContactDelete">Delete</el-button>
+        <el-button @click="addingPhone = true">Add phone</el-button>
+        <el-button @click="addingAddress = true">Add address</el-button>
+        <el-button @click="addingEmail = true">Add email</el-button>
         <el-button @click="onEdit">Edit</el-button>
+        <el-button 
+          type="danger"
+          @click="onContactDelete">Delete</el-button>
       </el-col>
     </el-row>
     <div class="title">Addresses</div>
@@ -126,6 +146,26 @@ export default {
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- Adding Dialogs -->
+    <AddAddress
+      :open="addingAddress"
+      :contact="contact.id"
+      @close="addingAddress = false"
+      @update="$emit('update')"
+    />
+    <AddEmail
+      :open="addingEmail"
+      :contact="contact.id"
+      @close="addingEmail = false"
+      @update="$emit('update')"
+    />
+    <AddPhone
+      :open="addingPhone"
+      :contact="contact.id"
+      @close="addingPhone = false"
+      @update="$emit('update')"
+    />
   </div>
 </template>
 
