@@ -64,6 +64,18 @@ export default new Vuex.Store({
       return promise;
     },
 
+    updateObject({ dispatch }, { type, id, data }) {
+      const url = `${type}/${id}`;
+      const promise = api.patch(url, data);
+
+      promise
+        .then(() => {
+          dispatch('getContacts');
+        });
+
+      return promise;
+    },
+
     deleteObject({ commit, dispatch }, { type, id }) {
       api.delete(`${type}/${id}`)
         .then(() => {

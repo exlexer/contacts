@@ -1,5 +1,5 @@
 <script>
-import api from '@/api';
+import { mapActions } from 'vuex';
 
 const newAddress = () => ({
   line1: '',
@@ -11,28 +11,45 @@ const newAddress = () => ({
 
 export default {
   props: {
-    contact: Number,
-    open: Boolean,
-    address: Object,
+    id: Number,
+    open: [Boolean, Object],
   },
 
-  data: () => ({ form: newAddress() }),
+  data: () => ({ address: newAddress() }),
+
+  watch: {
+    open(val) {
+      if (typeof val === 'object') {
+        this.address = val;
+      }
+    },
+  },
 
   methods: {
+    ...mapActions(['createObject', 'updateObject']),
+
     onClose() {
       this.$emit('close');
+      this.address = newAddress();
     },
 
     onSubmit() {
       this.$refs.form.validate((valid) => {
         if (!valid) return false;
-        return api.post(`contacts/${this.contact}/addresses`, this.form)
-          .then(() => {
-            this.form = newAddress();
-            this.$emit('update');
-            this.$emit('close');
-          })
-          .catch(err => this.$message.error(err));
+        let promise;
+        if (typeof this.open === 'object') {
+          const payload = { type: 'addresses', id: this.open.id, data: this.address };
+          promise = this.updateObject(payload);
+        } else {
+          const payload = { type: 'addresses', id: this.id, data: this.address };
+          promise = this.createObject(payload);
+        }
+        return promise
+          .then(() => this.$emit('close'))
+          .catch(err => this.$message.error(err))
+          .finally(() => {
+            this.address = newAddress();
+          });
       });
     },
   },
@@ -42,12 +59,12 @@ export default {
 <template>
   <el-dialog
     title="Add Address"
-    :visible="open"
+    :visible="!!open"
     @close="onClose"
     width="70%">
     <el-form
       ref="form"
-      :model="form"
+      :model="address"
       label-width="120px">
       <el-form-item
         label="Line 1"
@@ -55,14 +72,14 @@ export default {
         <el-input
           name="line1"
           placeholder="Line 1"
-          v-model="form.line1"/>
+          v-model="address.line1"/>
       </el-form-item>
       <el-form-item
         label="Line 2">
         <el-input
           name="line2"
           placeholder="Line 2"
-          v-model="form.line2"/>
+          v-model="address.line2"/>
       </el-form-item>
       <el-form-item
         label="City"
@@ -70,7 +87,7 @@ export default {
         <el-input
           name="city"
           placeholder="City"
-          v-model="form.city"/>
+          v-model="address.city"/>
       </el-form-item>
       <el-form-item
         label="State"
@@ -78,15 +95,15 @@ export default {
         <el-input
           name="state"
           placeholder="State"
-          v-model="form.state"/>
+          v-model="address.state"/>
       </el-form-item>
       <el-form-item
-        label="country"
+        label="Country"
         :rules="{ required: true, message: 'country can not be empty', trigger: 'blur' }">
         <el-input
           name="country"
           placeholder="Country"
-          v-model="form.country"/>
+          v-model="address.country"/>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">

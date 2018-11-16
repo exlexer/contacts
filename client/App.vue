@@ -1,9 +1,9 @@
 <script>
 import { mapMutations, mapActions, mapState } from 'vuex';
-import { Roster, Contact, AddContact } from '@/components';
+import { Roster, Contact, ActionContact } from '@/components';
 
 export default {
-  components: { Roster, Contact, AddContact },
+  components: { Roster, Contact, ActionContact },
 
   data: () => ({
     adding: false,
@@ -91,7 +91,7 @@ export default {
     </el-main>
 
     <!-- Dialogs -->
-    <AddContact
+    <ActionContact
       :open="adding"
       @close="adding = false"
     />

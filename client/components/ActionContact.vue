@@ -40,11 +40,10 @@ export default {
 
         for (let i = 0; i < phones.length; i += 1) {
           data.phones.push(phones[i].value);
-        };
+        }
 
         const payload = { type: 'contacts', data: { ...this.contact, ...data } };
-        console.log(data);
-        console.log(payload);
+
         return this.createObject(payload)
           .then(() => {
             this.contact = newContact();

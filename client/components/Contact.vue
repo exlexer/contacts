@@ -1,8 +1,8 @@
 <script>
 import { mapActions, mapState } from 'vuex';
-import AddAddress from './AddAddress.vue';
-import AddEmail from './AddEmail.vue';
-import AddPhone from './AddPhone.vue';
+import ActionAddress from './ActionAddress.vue';
+import ActionEmail from './ActionEmail.vue';
+import ActionPhone from './ActionPhone.vue';
 
 export default {
   props: {
@@ -10,15 +10,15 @@ export default {
   },
 
   components: {
-    AddAddress,
-    AddEmail,
-    AddPhone,
+    ActionAddress,
+    ActionEmail,
+    ActionPhone,
   },
 
   data: () => ({
-    addingAddress: false,
-    addingPhone: false,
-    addingEmail: false,
+    address: false,
+    phone: false,
+    email: false,
     info: [
       {
         prop: 'addresses',
@@ -48,7 +48,11 @@ export default {
       this.deleteObject({ type, id });
     },
 
-    onEdit() { },
+    onEdit(type, obj) {
+      type = type.replace(/s$/, '').replace(/se$/, 's');
+      console.log(type);
+      this[type] = obj;
+    },
   },
 
   computed: {
@@ -73,9 +77,9 @@ export default {
         {{ contact.dob }}
       </el-col>
       <el-col :span="18" style="text-align: right;">
-        <el-button @click="addingPhone = true">Add phone</el-button>
-        <el-button @click="addingAddress = true">Add address</el-button>
-        <el-button @click="addingEmail = true">Add email</el-button>
+        <el-button @click="phone = true">Add phone</el-button>
+        <el-button @click="address = true">Add address</el-button>
+        <el-button @click="email = true">Add email</el-button>
         <el-button @click="onEdit">Edit</el-button>
         <el-button
           type="danger"
@@ -106,7 +110,7 @@ export default {
           <template slot-scope="{ row }">
             <el-button
               size="mini"
-              @click="onEdit(row)">Edit</el-button>
+              @click="onEdit(object.prop, row)">Edit</el-button>
             <el-button
               size="mini"
               type="danger"
@@ -117,20 +121,20 @@ export default {
     </template>
 
     <!-- Adding Dialogs -->
-    <AddAddress
-      :open="addingAddress"
-      :contact="contact.id"
-      @close="addingAddress = false"
+    <ActionAddress
+      :open="address"
+      :id="contact.id"
+      @close="address = false"
     />
-    <AddEmail
-      :open="addingEmail"
-      :contact="contact.id"
-      @close="addingEmail = false"
+    <ActionEmail
+      :open="email"
+      :id="contact.id"
+      @close="email = false"
     />
-    <AddPhone
-      :open="addingPhone"
-      :contact="contact.id"
-      @close="addingPhone = false"
+    <ActionPhone
+      :open="phone"
+      :id="contact.id"
+      @close="phone = false"
     />
   </div>
 </template>
