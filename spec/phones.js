@@ -32,7 +32,7 @@ describe('Phones', () => {
         request(server)
           .patch(`/api/phones/${phone}`)
           .send({ phone: '18003337777' })
-          .expect(204, done);
+          .expect(200, done);
       });
   });
 
@@ -41,7 +41,7 @@ describe('Phones', () => {
       .then(({ phone }) => {
         request(server)
           .delete(`/api/phones/${phone}`)
-          .expect(204, done);
+          .expect(200, done);
       });
   });
 });

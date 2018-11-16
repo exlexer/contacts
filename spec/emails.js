@@ -32,7 +32,7 @@ describe('Emails', () => {
         request(server)
           .patch(`/api/emails/${email}`)
           .send({ email: 'member@another.com' })
-          .expect(204, done);
+          .expect(200, done);
       });
   });
 
@@ -41,7 +41,7 @@ describe('Emails', () => {
       .then(({ email }) => {
         request(server)
           .delete(`/api/emails/${email}`)
-          .expect(204, done);
+          .expect(200, done);
       });
   });
 

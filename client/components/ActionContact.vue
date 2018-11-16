@@ -12,42 +12,67 @@ const newContact = () => ({
 
 export default {
   props: {
-    open: Boolean,
+    open: [Boolean, Object],
   },
 
   data: () => ({ contact: newContact() }),
 
+  watch: {
+    open(val) {
+      if (typeof val === 'object') {
+        this.contact = val;
+      }
+    },
+  },
+
+  computed: {
+    isNew() {
+      return typeof this.open !== 'object';
+    },
+  },
+
   methods: {
-    ...mapActions({
-      addContact: 'addContact',
-      createObject: 'createObject',
-    }),
+    ...mapActions(['createObject', 'updateObject']),
+
+    onClose() {
+      this.$emit('close');
+      this.contact = newContact();
+    },
 
     onSubmit() {
       this.$refs.form.validate((valid) => {
         if (!valid) return false;
 
-        const { emails, phones } = this.contact;
+        let promise;
 
-        const data = {
-          emails: [],
-          phones: [],
-        };
+        if (this.isNew) {
+          const { emails, phones } = this.contact;
 
-        for (let i = 0; i < emails.length; i += 1) {
-          data.emails.push(emails[i].value);
+          const data = {
+            emails: [],
+            phones: [],
+          };
+
+          for (let i = 0; i < emails.length; i += 1) {
+            data.emails.push(emails[i].value);
+          }
+
+          for (let i = 0; i < phones.length; i += 1) {
+            data.phones.push(phones[i].value);
+          }
+
+          const payload = { type: 'contacts', data: { ...this.contact, ...data } };
+          promise = this.createObject(payload);
+        } else {
+          const payload = { type: 'contacts', id: this.contact.id, data: this.contact };
+          promise = this.updateObject(payload);
         }
 
-        for (let i = 0; i < phones.length; i += 1) {
-          data.phones.push(phones[i].value);
-        }
-
-        const payload = { type: 'contacts', data: { ...this.contact, ...data } };
-
-        return this.createObject(payload)
-          .then(() => {
+        return promise
+          .then(() => this.$emit('close'))
+          .catch(err => this.$message.error(err))
+          .finally(() => {
             this.contact = newContact();
-            this.$emit('close');
           });
       });
     },
@@ -81,8 +106,8 @@ export default {
 <template>
   <el-dialog
     title="Add Contact"
-    :visible="open"
-    @close="$emit('close')"
+    :visible="!!open"
+    @close="onClose"
     width="70%">
     <el-form
       v-if="contact"
@@ -117,6 +142,7 @@ export default {
         />
       </el-form-item>
       <el-form-item
+        v-if="isNew"
         v-for="(phone, index) in contact.phones"
         :label="!index ? 'Phone Number' : ''"
         :key="'p' + index"
@@ -134,6 +160,7 @@ export default {
         </el-button>
       </el-form-item>
       <el-form-item
+        v-if="isNew"
         v-for="(email, index) in contact.emails"
         :label="!index ? 'Email' : ''"
         :key="'e' + index"
@@ -152,6 +179,7 @@ export default {
         </el-button>
       </el-form-item>
       <template
+        v-if="isNew"
         v-for="(address, index) in contact.addresses">
         <el-form-item
           :key="'a' + index + 'line1'"
@@ -201,9 +229,15 @@ export default {
       </template>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button name="addPhone" @click="addItem('phones')">Add phone</el-button>
-      <el-button name="addEmail" @click="addItem('emails')">Add email</el-button>
-      <el-button name="addAddress" @click="addItem('addresses')">Add address</el-button>
+      <el-button v-if="isNew" name="addPhone" @click="addItem('phones')">
+        Add phone
+      </el-button>
+      <el-button v-if="isNew" name="addEmail" @click="addItem('emails')">
+        Add email
+      </el-button>
+      <el-button v-if="isNew" name="addAddress" @click="addItem('addresses')">
+        Add address
+      </el-button>
       <el-button name="submit" type="primary" @click="onSubmit">Submit</el-button>
     </span>
   </el-dialog>

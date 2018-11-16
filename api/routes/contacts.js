@@ -16,7 +16,7 @@ router.post('/', (req, res, next) => {
 
   if (!(phones && phones.length)
     || !(emails && emails.length)) {
-    return res.sendStatus(400);
+    res.status(400).send('Please complete information');
   }
 
   const contact = new Contact({
@@ -35,7 +35,7 @@ router.post('/', (req, res, next) => {
   contact.addEmails(emails);
 
   contact.store()
-    .then(() => res.sendStatus(201))
+    .then(() => res.status(201).send('Contact has been created'))
     .catch(err => next(err));
 });
 
@@ -43,7 +43,18 @@ router.post('/', (req, res, next) => {
 router.delete('/:id', (req, res, next) => {
   const { id } = req.params;
   Contact.delete(id)
-    .then(() => res.sendStatus(204))
+    .then(() => res.status(200).send('Contact has been deleted'))
+    .catch(err => next(err));
+});
+
+/* PATCH contacts. */
+router.patch('/:id', (req, res, next) => {
+  const { id } = req.params;
+  const contact = req.body;
+  if (!id || !contact) res.status(400).send('Please complete information');
+  Contact.getById(id)
+    .then(found => found.update(contact))
+    .then(() => res.status(200).send('Contact has been updated'))
     .catch(err => next(err));
 });
 
@@ -51,9 +62,9 @@ router.delete('/:id', (req, res, next) => {
 router.post('/:id/phones', (req, res, next) => {
   const { id } = req.params;
   const { phone } = req.body;
-  if (!id || !phone) return res.sendStatus(400);
+  if (!id || !phone) res.status(400).send('Please complete information');
   new Phone(phone).store(id)
-    .then(() => res.sendStatus(201))
+    .then(() => res.status(201).send('Phone has been added'))
     .catch(err => next(err))
 });
 
@@ -61,9 +72,9 @@ router.post('/:id/phones', (req, res, next) => {
 router.post('/:id/addresses', (req, res, next) => {
   const { id } = req.params;
   const address = req.body;
-  if (!id || !address) return res.sendStatus(400);
+  if (!id || !address) res.status(400).send('Please complete information');
   new Address(address).store(id)
-    .then(() => res.sendStatus(201))
+    .then(() => res.status(201).send('Address has been added'))
     .catch(err => next(err))
 });
 
@@ -71,9 +82,9 @@ router.post('/:id/addresses', (req, res, next) => {
 router.post('/:id/emails', (req, res, next) => {
   const { id } = req.params;
   const { email } = req.body;
-  if (!id || !email) return res.sendStatus(400);
+  if (!id || !email) res.status(400).send('Please complete information');
   new Email(email).store(id)
-    .then(() => res.sendStatus(201))
+    .then(() => res.status(201).send('Email has been added'))
     .catch(err => next(err))
 });
 

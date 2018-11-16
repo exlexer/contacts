@@ -3,6 +3,7 @@ import { mapActions, mapState } from 'vuex';
 import ActionAddress from './ActionAddress.vue';
 import ActionEmail from './ActionEmail.vue';
 import ActionPhone from './ActionPhone.vue';
+import ActionContact from './ActionContact.vue';
 
 export default {
   props: {
@@ -13,9 +14,11 @@ export default {
     ActionAddress,
     ActionEmail,
     ActionPhone,
+    ActionContact,
   },
 
   data: () => ({
+    editing: false,
     address: false,
     phone: false,
     email: false,
@@ -23,8 +26,8 @@ export default {
       {
         prop: 'addresses',
         columns: [
-          { prop: 'line1', label: 'Line 1' },
-          { prop: 'line2', label: 'Line 2' },
+          { prop: 'line_1', label: 'Line 1' },
+          { prop: 'line_2', label: 'Line 2' },
           { prop: 'city', label: 'City' },
           { prop: 'state', label: 'State' },
           { prop: 'country', label: 'Country' },
@@ -49,9 +52,16 @@ export default {
     },
 
     onEdit(type, obj) {
-      type = type.replace(/s$/, '').replace(/se$/, 's');
-      console.log(type);
-      this[type] = obj;
+      this[this.parseType(type)] = obj;
+    },
+
+
+    onAdd(type) {
+      this[this.parseType(type)] = true;
+    },
+
+    parseType(type) {
+      return type.replace(/s$/, '').replace(/se$/, 's');
     },
   },
 
@@ -72,18 +82,28 @@ export default {
   <div>
     <el-row class="info">
       <el-col :span="6">
+        <span class="title">
+        Full Name:
+        </span>
         {{ contact.firstName | capitalize }} {{ contact.lastName | capitalize }}
         <br />
+        <span class="title">
+          Date of Birth:
+        </span>
         {{ contact.dob }}
       </el-col>
       <el-col :span="18" style="text-align: right;">
-        <el-button @click="phone = true">Add phone</el-button>
-        <el-button @click="address = true">Add address</el-button>
-        <el-button @click="email = true">Add email</el-button>
-        <el-button @click="onEdit">Edit</el-button>
+        <el-button
+          @click="editing = true"
+          circle>
+          <i class="el-icon-edit" />
+        </el-button>
         <el-button
           type="danger"
-          @click="onDelete('contacts', contact.id)">Delete</el-button>
+          @click="onDelete('contacts', contact.id)"
+          circle>
+          <i class="el-icon-delete" />
+        </el-button>
       </el-col>
     </el-row>
     <template v-for="(object, index) in info">
@@ -91,11 +111,13 @@ export default {
         :key="'h' + index"
         class="title">
         {{ object.prop | capitalize }}
+        <el-button @click="onAdd(object.prop)" circle size="mini" style="margin-left: 5px;">
+          <i class="el-icon-plus" />
+        </el-button>
       </div>
       <el-table
         :key="'t' + index"
         :data="contact[object.prop]"
-        border
         stripe
         style="width: 100%">
         <el-table-column
@@ -109,12 +131,16 @@ export default {
           label="Operations">
           <template slot-scope="{ row }">
             <el-button
-              size="mini"
-              @click="onEdit(object.prop, row)">Edit</el-button>
+              @click="onEdit(object.prop, row)"
+              circle>
+              <i class="el-icon-edit" />
+            </el-button>
             <el-button
-              size="mini"
               type="danger"
-              @click="onDelete(object.prop, row.id)">Delete</el-button>
+              @click="onDelete(object.prop, contact.id)"
+              circle>
+              <i class="el-icon-delete" />
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -136,16 +162,25 @@ export default {
       :id="contact.id"
       @close="phone = false"
     />
+    <ActionContact
+      :open="editing ? contact : false"
+      :id="contact.id"
+      @close="editing = false"
+    />
   </div>
 </template>
 
-<style scopes>
+<style scoped>
 .info {
   padding: 10px;
-  background: #99a9bf;
+  background: #FAFAFA;
   border-radius: 3px;
+  color: #333;
+  line-height: 20px;
 }
 .title {
   padding: 10px;
+  color: #409EFF;
+  margin: 10px;
 }
 </style>

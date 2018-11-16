@@ -6,19 +6,19 @@ const { Email } = require('../models');
 router.patch('/:id', (req, res, next) => {
   const { id } = req.params;
   const { email } = req.body;
-  if (!id || !email) return res.sendStatus(400);
+  if (!id || !email) res.status(400).send('Please complete information');
   Email.getById(id)
     .then(found => found.update(email))
-    .then(() => res.sendStatus(204))
+    .then(() => res.status(200).send('Email has been updated'))
     .catch(err => next(err))
 });
 
 /* DELETE email. */
 router.delete('/:id', (req, res, next) => {
   const { id } = req.params;
-  if (!id) return res.sendStatus(400);
+  if (!id) res.status(400).send('Please complete information');
   Email.delete(id)
-    .then(() => res.sendStatus(204))
+    .then(() => res.status(200).send('Email has been deleted'))
     .catch(err => next(err))
 });
 

@@ -67,8 +67,10 @@ export default {
 
 <template>
   <el-container>
+    <el-header>
+      Contacts
+    </el-header>
     <el-main>
-
       <!-- Tabs -->
       <el-tabs
         type="card"
@@ -99,6 +101,14 @@ export default {
 </template>
 
 <style>
+.el-header {
+  background-color: #409EFF;
+  color: #fff;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 60px;
+}
+
 body, html {
   width: 100%;
   height: 100%;

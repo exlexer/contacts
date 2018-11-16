@@ -1,4 +1,5 @@
 const request = require('supertest');
+const assert = require('assert');
 const app = require('../server');
 const { db } = require('../api/lib');
 
@@ -46,7 +47,16 @@ describe('Addresses', () => {
               country: 'USA',
             },
           })
-          .expect(204, done);
+          .expect(200)
+          .then(() => db.query('select * from addresses where id = $1', [address]))
+          .then((address) => {
+            assert(address.line_1, '789 Final St');
+            assert(address.line_2, 'Apt 6');
+            assert(address.city, 'Nowhere');
+            assert(address.state, 'Okahoma');
+            assert(address.country, 'USA');
+            return done();
+          });
       });
   });
 
@@ -55,7 +65,7 @@ describe('Addresses', () => {
       .then(({ address }) => {
         request(server)
           .delete(`/api/addresses/${address}`)
-          .expect(204, done);
+          .expect(200, done);
       });
   });
 });

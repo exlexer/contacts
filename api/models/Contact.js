@@ -1,13 +1,14 @@
 const { db } = require('../lib');
 
 class Contact {
-  constructor({ firstName, lastName, birth }) {
+  constructor({ firstName, lastName, birth }, id) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.birth = birth;
     this.addresses = [];
     this.phones = [];
     this.emails = [];
+    this.id = id;
   }
 
   addAddresses(addresses) {
@@ -23,6 +24,28 @@ class Contact {
   addEmails(emails) {
     if (!Array.isArray(emails)) emails = [emails];
     this.emails = [...this.emails, ...emails];
+  }
+
+  update({ firstName, lastName, dob }) {
+    return new Promise((resolve, reject) => {
+      const text = `
+        update contacts set
+          first_name = $1,
+          last_name = $2,
+          birth = $3
+        where id = $4`;
+
+      const params = [
+        firstName || this.firstName,
+        lastName || this.lastName,
+        dob || this.dob,
+        this.id,
+      ];
+      
+      db.query(text, params)
+        .then(() => resolve())
+        .catch(err => reject(err));
+    });
   }
 
   store() {
@@ -54,6 +77,14 @@ class Contact {
 
   static delete(id) {
     return db.query('delete from contacts where id = $1', [id])
+  }
+
+  static getById(id) {
+    return new Promise((resolve, reject) => {
+      db.query('select first_name firstName, last_name lastName, birth dob from contacts where id = $1', [id])
+        .then(contact => resolve(new Contact(contact, id)))
+        .catch(err => reject(err));
+    });
   }
 
   static getAll() {

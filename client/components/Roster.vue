@@ -19,7 +19,6 @@ export default {
 <template>
   <el-table
     :data="contacts"
-    border
     stripe
     @row-click="openContact"
     style="width: 100%">

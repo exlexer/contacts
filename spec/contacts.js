@@ -1,4 +1,5 @@
 const request = require('supertest');
+const assert = require('assert');
 const app = require('../server');
 const { db } = require('../api/lib');
 
@@ -18,7 +19,7 @@ describe('Contacts', () => {
 
   it('GET contact returns 200', (done) => {
     inputContact()
-      .then(() => {
+      .then((id) => {
         request(server)
           .get('/api/contacts')
           .expect(({ body }) => {
@@ -26,7 +27,7 @@ describe('Contacts', () => {
             const rows = body.filter(contact => 
               (contact.firstName === 'john') &&
               (contact.lastName === 'doe') &&
-              (contact.dob === '1992-01-20')
+              (contact.dob === '20 Jan 1992')
             );
             if (rows.length === 0) throw new Error('missing posted contact');
             if (!rows[0].phones.length) throw new Error('missing phones');
@@ -89,8 +90,29 @@ describe('Contacts', () => {
       .then((id) => {
         request(server)
           .delete(`/api/contacts/${id}`)
-          .expect(204, done);
+          .expect(200, done);
       })
+  });
+
+  it('PATCH contact address succeeds', (done) => {
+    inputContact()
+      .then((id) => {
+        request(server)
+          .patch(`/api/contacts/${id}`)
+          .send({
+            firstName: 'Kyle',
+            lastName: 'Hilton Sr',
+            dob: '01 Jan 2018',
+          })
+          .expect(200)
+          .then(() => db.query('select * from contacts where id = $1', [id]))
+          .then((contact) => {
+            assert(contact.last_name, 'Kyle');
+            assert(contact.last_name, 'Hilton Sr');
+            assert(contact.birth, '01 Jan 2018');
+            return done();
+          });
+      });
   });
 });
 

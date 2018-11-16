@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import api from '@/api';
+import { Message } from 'element-ui';
 
 Vue.use(Vuex);
 
@@ -57,7 +58,8 @@ export default new Vuex.Store({
       const promise = api.post(url, data);
 
       promise
-        .then(() => {
+        .then(({ data: msg }) => {
+          Message.success(msg);
           dispatch('getContacts');
         });
 
@@ -69,7 +71,8 @@ export default new Vuex.Store({
       const promise = api.patch(url, data);
 
       promise
-        .then(() => {
+        .then(({ data: msg }) => {
+          Message.success(msg);
           dispatch('getContacts');
         });
 
@@ -78,7 +81,8 @@ export default new Vuex.Store({
 
     deleteObject({ commit, dispatch }, { type, id }) {
       api.delete(`${type}/${id}`)
-        .then(() => {
+        .then(({ data: msg }) => {
+          Message.success(msg);
           dispatch('getContacts');
           if (type === 'contacts') commit('CLOSE_CONTACT', { id });
         });
