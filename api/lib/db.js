@@ -2,6 +2,13 @@ const { Pool } = require('pg');
 
 const pool = new Pool();
 
+const pool = process.env.NODE_ENV === 'prod'
+  ? new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: true,
+    })
+  : new Pool();
+
 pool.on('error', function(err, client) {
   console.error('idle client error', err.message, err.stack)
 });
