@@ -1,11 +1,9 @@
 const { Pool } = require('pg');
 
-const pool = process.env.NODE_ENV === 'prod'
-  ? new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: true,
-    })
-  : new Pool();
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || 'postgresql://postgres@localhost:5432/contacts',
+  ssl: process.env.NODE_ENV === 'production',
+});
 
 pool.on('error', function(err, client) {
   console.error('idle client error', err.message, err.stack)

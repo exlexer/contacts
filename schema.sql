@@ -2,7 +2,6 @@ create table contacts(
   id serial NOT NULL PRIMARY KEY,
   first_name text NOT NULL,
   last_name text NOT NULL,
-  last_name text NOT NULL,
   birth date NOT NULL
 );
 

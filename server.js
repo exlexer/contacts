@@ -2,10 +2,6 @@ const express = require('express');
 const path = require('path');
 const logger = require('morgan');
 
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
-} 
-
 const app = express();
 
 const router = require('./api/router');
