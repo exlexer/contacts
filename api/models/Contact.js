@@ -62,7 +62,7 @@ class Contact {
         select array_to_json(array(select row_to_json(row) from (select
           c.first_name "firstName",
           c.last_name "lastName",
-          c.birth "dob",
+          to_char(c.birth, 'DD Mon YYYY') dob,
           c.id,
           array_to_json(array(select row_to_json(e) from (select * from emails where contact_id = c.id) e)) emails,
           array_to_json(array(select row_to_json(p) from (select * from phones where contact_id = c.id) p)) phones,

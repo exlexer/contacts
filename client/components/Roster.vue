@@ -1,16 +1,17 @@
 <script>
+import { mapMutations, mapState } from 'vuex';
+
 export default {
-  props: {
-    open: Array,
-    contacts: Array,
+  computed: {
+    ...mapState({
+      contacts: state => state.contacts,
+    }),
   },
 
   methods: {
-    onClick(data) {
-      const { open } = this;
-      const contacts = open.filter(contact => contact.id === data.id);
-      if (!contacts.length) this.$emit('open', data);
-    },
+    ...mapMutations({
+      openContact: 'OPEN_CONTACT',
+    }),
   },
 };
 </script>
@@ -20,7 +21,7 @@ export default {
     :data="contacts"
     border
     stripe
-    @row-click="onClick"
+    @row-click="openContact"
     style="width: 100%">
     <el-table-column
       prop="firstName"

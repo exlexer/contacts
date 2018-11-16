@@ -1,4 +1,5 @@
 <script>
+import { mapActions } from 'vuex';
 import api from '@/api';
 
 export default {
@@ -10,17 +11,17 @@ export default {
   data: () => ({ form: { phone: '' } }),
 
   methods: {
-    onClose() {
-      this.$emit('close');
-    },
+    ...mapActions({
+      createObject: 'createObject',
+    }),
 
     onSubmit() {
       this.$refs.form.validate((valid) => {
         if (!valid) return false;
-        api.post(`contacts/${this.contact}/phones`, this.form)
+        console.log(this.contact);
+        const payload = { type: 'phones', id: this.contact, data: this.form };
+        return this.createObject(payload)
           .then(() => {
-            this.form.phone = '';
-            this.$emit('update');
             this.$emit('close');
           })
           .catch(err => this.$message.error(err));
@@ -34,7 +35,7 @@ export default {
   <el-dialog
     title="Add Phone Number"
     :visible="open"
-    @close="onClose"
+    @close="$emit('close');"
     width="70%">
     <el-form
       ref="form"
@@ -45,11 +46,11 @@ export default {
         :rules="[
           { required: true, message: 'phone number can not be empty', trigger: 'blur' },
         ]">
-        <el-input v-model="form.phone" />
+        <el-input name="phone" v-model="form.phone" />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onSubmit">Submit</el-button>
+      <el-button name="addPhone" type="primary" @click="onSubmit">Submit</el-button>
     </span>
   </el-dialog>
 </template>

@@ -1,5 +1,5 @@
 <script>
-import api from '@/api';
+import { mapActions } from 'vuex';
 
 const newContact = () => ({
   firstName: '',
@@ -12,38 +12,44 @@ const newContact = () => ({
 
 export default {
   props: {
-    contact: Number,
     open: Boolean,
   },
 
   data: () => ({ contact: newContact() }),
 
   methods: {
-    onClose() {
-      this.$emit('close');
-    },
+    ...mapActions({
+      addContact: 'addContact',
+      createObject: 'createObject',
+    }),
 
     onSubmit() {
       this.$refs.form.validate((valid) => {
         if (!valid) return false;
+
         const { emails, phones } = this.contact;
-        let arr = [];
+
+        const data = {
+          emails: [],
+          phones: [],
+        };
+
         for (let i = 0; i < emails.length; i += 1) {
-          arr[i] = emails[i].value;
+          data.emails.push(emails[i].value);
         }
-        this.contact.emails = arr;
-        arr = [];
+
         for (let i = 0; i < phones.length; i += 1) {
-          arr[i] = phones[i].value;
-        }
-        this.contact.phones = arr;
-        api.post('contacts', this.contact)
+          data.phones.push(phones[i].value);
+        };
+
+        const payload = { type: 'contacts', data: { ...this.contact, ...data } };
+        console.log(data);
+        console.log(payload);
+        return this.createObject(payload)
           .then(() => {
             this.contact = newContact();
-            this.$emit('update');
             this.$emit('close');
-          })
-          .catch(err => this.$message.error(err));
+          });
       });
     },
 
@@ -56,10 +62,10 @@ export default {
           state: '',
           country: '',
         } : { value: '' };
-      
+
       this.contact[type].push(data);
     },
-    
+
     removeItem(type, item) {
       if (!['phones', 'emails'].includes(type)
         || this.contact[type].length > 1) {
@@ -67,7 +73,7 @@ export default {
         if (index !== -1) {
           this.contact[type].splice(index, 1);
         }
-      } 
+      }
     },
   },
 };
@@ -77,9 +83,10 @@ export default {
   <el-dialog
     title="Add Contact"
     :visible="open"
-    @close="onClose"
+    @close="$emit('close')"
     width="70%">
     <el-form
+      v-if="contact"
       ref="form"
       :model="contact"
       label-width="120px">
@@ -88,14 +95,14 @@ export default {
         :rules="[
           { required: true, message: 'Please input first name', trigger: 'blur' },
         ]">
-        <el-input v-model="contact.firstName" />
+        <el-input name="firstName" v-model="contact.firstName" />
       </el-form-item>
       <el-form-item
         label="Last Name"
         :rules="[
           { required: true, message: 'Please input last name', trigger: 'blur' },
         ]">
-        <el-input v-model="contact.lastName" />
+        <el-input name="lastName" v-model="contact.lastName" />
       </el-form-item>
       <el-form-item
         label="Date of Birth"
@@ -104,6 +111,7 @@ export default {
         ]">
         <el-date-picker
           type="date"
+          name="birth"
           placeholder="Select Date"
           v-model="contact.dob"
           style="width: 100%;"
@@ -117,7 +125,9 @@ export default {
         :rules="{
           required: true, message: 'phone number can not be empty', trigger: 'blur'
         }">
-        <el-input v-model="phone.value" />
+        <el-input
+          :name="`phone${index}`"
+          v-model="phone.value" />
         <el-button
           @click.prevent="removeItem('phones', phone)"
           v-if="!!index">
@@ -130,10 +140,12 @@ export default {
         :key="'e' + index"
         :prop="`emails.${index}.value`"
         :rules="[
-          { type: 'email', message: 'Please input correct email address', trigger: ['blur', 'change'] },
+          { type: 'email', message: 'Please input correct email address', trigger: 'blur' },
           { required: true, message: 'email can not be empty', trigger: 'blur' },
         ]">
-        <el-input v-model="email.value" />
+        <el-input
+          :name="`email${index}`"
+          v-model="email.value" />
         <el-button
           @click.prevent="removeItem('emails', email)"
           v-if="!!index">
@@ -148,6 +160,7 @@ export default {
           :rules="{ required: true, message: 'line 1 can not be empty', trigger: 'blur' }"
           :label="!index ? 'Address' : ''">
           <el-input
+            :name="`address${index}`"
             placeholder="Line 1"
             v-model="address.line1"/>
         </el-form-item>
@@ -181,15 +194,18 @@ export default {
             placeholder="Country"
             v-model="address.country"/>
         </el-form-item>
-        <el-button @click.prevent="removeItem('addresses', address)">Delete</el-button>
+        <el-button
+          :key="'a' + index + 'delete'"
+          @click.prevent="removeItem('addresses', address)">
+          Delete
+        </el-button>
       </template>
-      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="addItem('phones')">Add phone</el-button>
-      <el-button @click="addItem('emails')">Add email</el-button>
-      <el-button @click="addItem('addresses')">Add address</el-button>
-      <el-button type="primary" @click="onSubmit">Submit</el-button>
+      <el-button name="addPhone" @click="addItem('phones')">Add phone</el-button>
+      <el-button name="addEmail" @click="addItem('emails')">Add email</el-button>
+      <el-button name="addAddress" @click="addItem('addresses')">Add address</el-button>
+      <el-button name="submit" type="primary" @click="onSubmit">Submit</el-button>
     </span>
   </el-dialog>
 </template>

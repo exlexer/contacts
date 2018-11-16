@@ -13,6 +13,7 @@ export default {
   props: {
     contact: Number,
     open: Boolean,
+    address: Object,
   },
 
   data: () => ({ form: newAddress() }),
@@ -25,7 +26,7 @@ export default {
     onSubmit() {
       this.$refs.form.validate((valid) => {
         if (!valid) return false;
-        api.post(`contacts/${this.contact}/addresses`, this.form)
+        return api.post(`contacts/${this.contact}/addresses`, this.form)
           .then(() => {
             this.form = newAddress();
             this.$emit('update');
@@ -50,15 +51,16 @@ export default {
       label-width="120px">
       <el-form-item
         label="Line 1"
-        :rules="{ required: true, message: 'line 1 can not be empty', trigger: 'blur' }"
-        :label="!index ? 'Address' : ''">
+        :rules="{ required: true, message: 'line 1 can not be empty', trigger: 'blur' }">
         <el-input
+          name="line1"
           placeholder="Line 1"
           v-model="form.line1"/>
       </el-form-item>
       <el-form-item
         label="Line 2">
         <el-input
+          name="line2"
           placeholder="Line 2"
           v-model="form.line2"/>
       </el-form-item>
@@ -66,6 +68,7 @@ export default {
         label="City"
         :rules="{ required: true, message: 'city can not be empty', trigger: 'blur' }">
         <el-input
+          name="city"
           placeholder="City"
           v-model="form.city"/>
       </el-form-item>
@@ -73,6 +76,7 @@ export default {
         label="State"
         :rules="{ required: true, message: 'state can not be empty', trigger: 'blur' }">
         <el-input
+          name="state"
           placeholder="State"
           v-model="form.state"/>
       </el-form-item>
@@ -80,12 +84,13 @@ export default {
         label="country"
         :rules="{ required: true, message: 'country can not be empty', trigger: 'blur' }">
         <el-input
+          name="country"
           placeholder="Country"
           v-model="form.country"/>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onSubmit">Submit</el-button>
+      <el-button name="addAddress" type="primary" @click="onSubmit">Submit</el-button>
     </span>
   </el-dialog>
 </template>

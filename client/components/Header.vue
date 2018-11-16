@@ -1,11 +1,28 @@
 <script>
+import { mapState, mapMutations } from 'vuex';
+
 export default {
   props: {
     openContacts: Array,
     activePage: String,
   },
 
+  computed: {
+    ...mapState({
+      open: state => state.open,
+      activeState: state => state.active,
+    }),
+    active: {
+      get() { return this.activeState; },
+      set(value) { this.navigate(value); },
+    },
+  },
+
   methods: {
+    ...mapMutations({
+      navigate: 'NAVIGATE',
+    }),
+
     onClose(e, index) {
       e.preventDefault();
       this.$emit('close', index);
@@ -20,8 +37,7 @@ export default {
 
 <template>
   <el-menu
-    :default-active="activePage"
-    class="el-menu-demo"
+    :default-active="active"
     mode="horizontal"
     background-color="#545c64"
     active-text-color="#ffd04b"
@@ -29,13 +45,13 @@ export default {
     @select="onSelect">
     <el-menu-item index="home">Home</el-menu-item>
     <el-menu-item
-      v-for="(contact, index) in openContacts"
+      v-for="(contact, index) in open"
       :key="index"
       :index="index.toString()">
       {{ contact.firstName | capitalize }} {{ contact.lastName | capitalize }}
       <button
         class="close"
-        @click="e => onClose(e, index)">
+        @click.prevent="e => onClose(e, index)">
         <i class="el-icon-close"></i>
       </button>
     </el-menu-item>

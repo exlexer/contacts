@@ -1,14 +1,11 @@
 <script>
-import api from '@/api';
-import { Header, Roster, Contact, AddContact } from '@/components';
+import { mapMutations, mapActions, mapState } from 'vuex';
+import { Roster, Contact, AddContact } from '@/components';
 
 export default {
-  components: { Header, Roster, Contact, AddContact },
+  components: { Roster, Contact, AddContact },
 
   data: () => ({
-    contacts: [],
-    open: [],
-    active: 'home',
     adding: false,
   }),
 
@@ -16,44 +13,35 @@ export default {
     this.getContacts();
   },
 
+  computed: {
+    ...mapState({
+      open: state => state.open,
+      activeState: state => state.active,
+    }),
+    active: {
+      get() { return this.activeState; },
+      set(value) { this.navigate(value); },
+    },
+  },
+
   methods: {
-    onUpdate() {
-      this.getContacts()
-        .then(() => {
-          const { open, contacts } = this;
-          for (let i = 0; i < open.length; i += 1) {
-            open[i] = contacts.filter(c => c.id == open[i].id)[0];
-          }
-        });
-    },
-
-    getContacts() {
-      const promise = api.get('contacts');
-
-      promise.then(({ data }) => {
-        this.contacts = data;
-      });
-
-      return promise;
-    },
+    ...mapActions({
+      getContacts: 'getContacts',
+    }),
+    ...mapMutations({
+      navigate: 'NAVIGATE',
+      closeContact: 'CLOSE_CONTACT',
+    }),
 
     onContactDelete() {
       const { open } = this;
       this.getContacts();
       for (let i = 0; i < open.length; i += 1) {
-        console.log(open[i].id);
-        console.log(this.active);
         if (open[i].id === +this.active) {
           this.onClose(i);
         }
       }
-      this.active = 'home';
-    },
-
-    onOpen(data) {
-      const { open } = this;
-      open.push(data);
-      this.active = data.id.toString();
+      this.navigate('home');
     },
 
     onClose(index) {
@@ -67,8 +55,10 @@ export default {
       }
       if (action === 'remove') {
         if (targetName === 'home') this.$message.error('Oops, you can\'t close home');
-        this.open = this.open.filter(tab => tab.id.toString() !== targetName);
-        this.active = 'home';
+        else {
+          this.closeContact({ id: targetName });
+          this.navigate('home');
+        }
       }
     },
   },
@@ -88,22 +78,14 @@ export default {
         <el-tab-pane
           label="Home"
           name="home">
-          <Roster
-            :open="open"
-            :contacts="contacts"
-            @open="onOpen"
-          />
+          <Roster />
         </el-tab-pane>
         <el-tab-pane
           v-for="item in open"
           :key="item.id.toString()"
           :label="`${item.firstName} ${item.lastName}`"
           :name="item.id.toString()">
-          <Contact
-            :contact="item"
-            @delete="onContactDelete"
-            @update="onUpdate"
-          />
+          <Contact :id="item.id" />
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -112,7 +94,6 @@ export default {
     <AddContact
       :open="adding"
       @close="adding = false"
-      @update="getContacts"
     />
   </el-container>
 </template>
@@ -123,11 +104,5 @@ body, html {
   height: 100%;
   margin: 0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-.el-header {
-  background-color: #545c64;
-  color: #333;
-  line-height: 60px;
 }
 </style>
