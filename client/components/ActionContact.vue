@@ -158,6 +158,7 @@ export default {
           required: true, message: 'phone number can not be empty', trigger: 'blur'
         }">
         <el-input
+          type="number"
           :name="`phone${index}`"
           v-model="phone.value" />
         <el-button

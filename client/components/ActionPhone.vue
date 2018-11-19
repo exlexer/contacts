@@ -64,7 +64,7 @@ export default {
         :rules="[
           { required: true, message: 'phone number can not be empty', trigger: 'blur' },
         ]">
-        <el-input name="phone" v-model="phone.phone" />
+        <el-input name="phone" type="number" v-model="phone.phone" />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
