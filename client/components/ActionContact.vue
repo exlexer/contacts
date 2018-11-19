@@ -15,7 +15,11 @@ export default {
     open: [Boolean, Object],
   },
 
-  data: () => ({ contact: newContact() }),
+  data() {
+    return {
+      contact: newContact(),
+    };
+  },
 
   watch: {
     open(val) {
@@ -42,7 +46,10 @@ export default {
     onSubmit() {
       this.$refs.form.validate((valid) => {
         if (!valid) return false;
-
+        if (!this.contact.dob) {
+          this.$message.error('Please select a date');
+          return false;
+        }
         let promise;
 
         if (this.isNew) {
@@ -131,6 +138,7 @@ export default {
       <el-form-item
         label="Date of Birth"
         :rules="[
+          { validator: rule.validateDate, trigger: 'blur' },
           { type: 'date', required: true, message: 'Please pick a date', trigger: 'change' },
         ]">
         <el-date-picker
