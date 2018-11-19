@@ -138,7 +138,6 @@ export default {
       <el-form-item
         label="Date of Birth"
         :rules="[
-          { validator: rule.validateDate, trigger: 'blur' },
           { type: 'date', required: true, message: 'Please pick a date', trigger: 'change' },
         ]">
         <el-date-picker
