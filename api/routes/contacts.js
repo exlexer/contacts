@@ -35,13 +35,18 @@ router.post('/', (req, res, next) => {
   phones = phones.map(phone => new Phone(phone));
   emails = emails.map(email => new Email(email));
 
+  console.log('HERE 3');
   contact.addAddresses(addresses);
   contact.addPhones(phones);
   contact.addEmails(emails);
 
+  console.log('HERE 4');
   contact
     .store()
-    .then(() => res.status(201).send('Contact has been created'))
+    .then(() => {
+      console.log('HERE 5');
+      return res.status(201).send('Contact has been created');
+    })
     .catch(err => next(err));
 });
 
