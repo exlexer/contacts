@@ -16,10 +16,7 @@ class Phone {
         returning id
       `;
 
-      const params = [
-        contactId,
-        this.number,
-      ];
+      const params = [contactId, this.number];
 
       db.query(text, params)
         .then(({ id }) => {
@@ -27,7 +24,7 @@ class Phone {
           resolve(id);
         })
         .catch(err => reject(err));
-    })
+    });
   }
 
   update(number) {
@@ -37,11 +34,8 @@ class Phone {
           phone_number = $1
         where id = $2`;
 
-      const params = [
-        number || this.number,
-        this.id,
-      ];
-      
+      const params = [number || this.number, this.id];
+
       db.query(text, params)
         .then(() => resolve())
         .catch(err => reject(err));
@@ -57,8 +51,9 @@ class Phone {
   }
 
   static delete(id) {
-    return db.query('delete from phones where id = $1', [id])
+    return db.query('delete from phones where id = $1', [id]);
   }
 }
 
 module.exports = Phone;
+

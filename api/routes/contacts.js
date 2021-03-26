@@ -22,12 +22,15 @@ router.post('/', (req, res, next) => {
     res.status(400).send('Please complete information');
   }
 
+  console.log('HERE');
+
   const contact = new Contact({
     firstName: body.firstName,
     lastName: body.lastName,
     birth: new Date(body.dob),
   });
 
+  console.log('HERE 2');
   addresses = addresses.map(address => new Address(address));
   phones = phones.map(phone => new Phone(phone));
   emails = emails.map(email => new Email(email));

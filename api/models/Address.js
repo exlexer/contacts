@@ -1,7 +1,9 @@
 const { db } = require('../lib');
 
 class Address {
-  constructor({ line1, line2, city, state, country }, id) {
+  constructor({
+    line1, line2, city, state, country,
+  }, id) {
     this.line1 = line1;
     this.line2 = line2;
     this.city = city;
@@ -20,14 +22,7 @@ class Address {
         returning id
       `;
 
-      const params = [
-        contactId,
-        this.line1,
-        this.line2,
-        this.city,
-        this.state,
-        this.country,
-      ];
+      const params = [contactId, this.line1, this.line2, this.city, this.state, this.country];
 
       db.query(text, params)
         .then(({ id }) => {
@@ -35,10 +30,12 @@ class Address {
           resolve(id);
         })
         .catch(err => reject(err));
-    })
+    });
   }
 
-  update({ line1, line2, city, state, country }) {
+  update({
+    line1, line2, city, state, country,
+  }) {
     return new Promise((resolve, reject) => {
       const text = `
         update addresses set
@@ -57,7 +54,7 @@ class Address {
         country || this.country,
         this.id,
       ];
-      
+
       db.query(text, params)
         .then(() => resolve())
         .catch(err => reject(err));
@@ -66,15 +63,19 @@ class Address {
 
   static getById(id) {
     return new Promise((resolve, reject) => {
-      db.query('select line_1 line1, line_2 line2, city, state, country from addresses where id = $1', [id])
+      db.query(
+        'select line_1 line1, line_2 line2, city, state, country from addresses where id = $1',
+        [id],
+      )
         .then(address => resolve(new Address(address, id)))
         .catch(err => reject(err));
     });
   }
 
   static delete(id) {
-    return db.query('delete from addresses where id = $1', [id])
+    return db.query('delete from addresses where id = $1', [id]);
   }
 }
 
 module.exports = Address;
+

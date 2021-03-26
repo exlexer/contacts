@@ -3,4 +3,4 @@ module.exports = {
   addresses: require('./addresses'),
   phones: require('./phones'),
   emails: require('./emails'),
-}
+};

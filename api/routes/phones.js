@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const { Phone } = require('../models');
 
@@ -10,7 +11,7 @@ router.patch('/:id', (req, res, next) => {
   Phone.getById(id)
     .then(found => found.update(phone))
     .then(() => res.status(200).send('Phone has been updated'))
-    .catch(err => next(err))
+    .catch(err => next(err));
 });
 
 /* DELETE phone. */
@@ -19,7 +20,7 @@ router.delete('/:id', (req, res, next) => {
   if (!id) return res.status(400).send('Please complete information');
   Phone.delete(id)
     .then(() => res.status(200).send('Phone has been deleted'))
-    .catch(err => next(err))
+    .catch(err => next(err));
 });
 
 module.exports = router;

@@ -14,19 +14,16 @@ class Email {
         values ($1, $2)
         returning id
       `;
-      
-      const params = [
-        contactId,
-        this.email,
-      ];
+
+      const params = [contactId, this.email];
 
       db.query(text, params)
-        .then(({ id }) => { 
+        .then(({ id }) => {
           this.id = id;
-          resolve(id)
+          resolve(id);
         })
         .catch(err => reject(err));
-    })
+    });
   }
 
   update(email) {
@@ -36,11 +33,8 @@ class Email {
           email = $1
         where id = $2`;
 
-      const params = [
-        email || this.email,
-        this.id,
-      ];
-      
+      const params = [email || this.email, this.id];
+
       db.query(text, params)
         .then(() => resolve())
         .catch(err => reject(err));
@@ -56,8 +50,9 @@ class Email {
   }
 
   static delete(id) {
-    return db.query('delete from emails where id = $1', [id])
+    return db.query('delete from emails where id = $1', [id]);
   }
 }
 
 module.exports = Email;
+

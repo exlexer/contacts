@@ -1,6 +1,9 @@
 const express = require('express');
+
 const router = express.Router();
-const { contacts, addresses, phones, emails } = require('./routes');
+const {
+  contacts, addresses, phones, emails,
+} = require('./routes');
 
 router.use('/contacts', contacts);
 router.use('/addresses', addresses);

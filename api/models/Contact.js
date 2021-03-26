@@ -41,7 +41,7 @@ class Contact {
         dob || this.dob,
         this.id,
       ];
-      
+
       db.query(text, params)
         .then(() => resolve())
         .catch(err => reject(err));
@@ -57,11 +57,7 @@ class Contact {
         returning id
       `;
 
-      const params = [
-        this.firstName,
-        this.lastName,
-        this.birth,
-      ];
+      const params = [this.firstName, this.lastName, this.birth];
 
       db.query(text, params)
         .then(({ id }) => Promise.all([
@@ -71,17 +67,19 @@ class Contact {
         ]))
         .then(() => resolve())
         .catch(err => reject(err));
-      
-    })
+    });
   }
 
   static delete(id) {
-    return db.query('delete from contacts where id = $1', [id])
+    return db.query('delete from contacts where id = $1', [id]);
   }
 
   static getById(id) {
     return new Promise((resolve, reject) => {
-      db.query('select first_name firstName, last_name lastName, birth dob from contacts where id = $1', [id])
+      db.query(
+        'select first_name firstName, last_name lastName, birth dob from contacts where id = $1',
+        [id],
+      )
         .then(contact => resolve(new Contact(contact, id)))
         .catch(err => reject(err));
     });
@@ -89,7 +87,8 @@ class Contact {
 
   static getAll() {
     return new Promise((resolve, reject) => {
-      db.query(`
+      db.query(
+        `
         select array_to_json(array(select row_to_json(row) from (select
           c.first_name "firstName",
           c.last_name "lastName",
@@ -98,16 +97,17 @@ class Contact {
           array_to_json(array(select row_to_json(e) from (select * from emails where contact_id = c.id) e)) emails,
           array_to_json(array(select row_to_json(p) from (select * from phones where contact_id = c.id) p)) phones,
           array_to_json(array(select row_to_json(a) from (select * from addresses where contact_id = c.id) a)) addresses
-        from contacts c) row)) "data"`)
-      .then(({ data }) => resolve(data))
-      .catch(err => reject(err));
-    })
+        from contacts c) row)) "data"`,
+      )
+        .then(({ data }) => resolve(data))
+        .catch(err => reject(err));
+    });
   }
 
   _storeItems(item, id) {
     const promises = [];
 
-    for (var i = 0; i < this[item].length; i++) {
+    for (let i = 0; i < this[item].length; i++) {
       promises.push(this[item][i].store(id));
     }
 
@@ -116,3 +116,4 @@ class Contact {
 }
 
 module.exports = Contact;
+

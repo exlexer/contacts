@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const { Email } = require('../models');
 
@@ -10,7 +11,7 @@ router.patch('/:id', (req, res, next) => {
   Email.getById(id)
     .then(found => found.update(email))
     .then(() => res.status(200).send('Email has been updated'))
-    .catch(err => next(err))
+    .catch(err => next(err));
 });
 
 /* DELETE email. */
@@ -19,7 +20,7 @@ router.delete('/:id', (req, res, next) => {
   if (!id) res.status(400).send('Please complete information');
   Email.delete(id)
     .then(() => res.status(200).send('Email has been deleted'))
-    .catch(err => next(err))
+    .catch(err => next(err));
 });
 
 module.exports = router;
