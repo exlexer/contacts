@@ -14,19 +14,20 @@ module.exports = {
   query(text, params) {
     return new Promise((resolve, reject) => {
       pool.connect((err, client, done) => {
-        if (err) return console.error('error fetching client from pool', err);
+        console.log(err);
+        if (err) return reject(err);
         try {
-          client.query(text, params, (err, res) => {
-            if (err) reject(err);
-            else {
-              if (res.command === 'DELETE' && res.rowCount < 1) reject(new Error('no rows deleted'));
-              if (res.command === 'INSERT' && res.rowCount < 1) reject(new Error('no rows inserted'));
-              if (res.command === 'INSERT' && res.rows.length === 1) resolve(res.rows[0]);
-              if (res.command === 'INSERT' && res.rows.length > 1) resolve(res.rows);
-              if (res.command === 'SELECT' && res.rowCount === 1) resolve(res.rows[0]);
-              if (res.command === 'SELECT' && res.rowCount > 1) resolve(res.rows);
-              resolve(res);
-            }
+          client.query(text, params, (error, res) => {
+            console.log(error);
+            if (error) return reject(error);
+
+            if (res.command === 'DELETE' && res.rowCount < 1) reject(new Error('no rows deleted'));
+            if (res.command === 'INSERT' && res.rowCount < 1) reject(new Error('no rows inserted'));
+            if (res.command === 'INSERT' && res.rows.length === 1) resolve(res.rows[0]);
+            if (res.command === 'INSERT' && res.rows.length > 1) resolve(res.rows);
+            if (res.command === 'SELECT' && res.rowCount === 1) resolve(res.rows[0]);
+            if (res.command === 'SELECT' && res.rowCount > 1) resolve(res.rows);
+            return resolve(res);
           });
         } finally {
           client.release();
