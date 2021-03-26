@@ -13,7 +13,13 @@ const client: Client = new Client({
       : false,
 });
 
-client.connect();
+client.connect((err) => {
+  if (err) {
+    console.error('connection error', err.stack);
+  } else {
+    console.log('connected');
+  }
+});
 
 client.on('error', (err: Error) => {
   throw err;
