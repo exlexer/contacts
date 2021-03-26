@@ -1,5 +1,5 @@
 import express from 'express';
-import logger from 'morgan';
+import morgan from 'morgan';
 import dotenv from 'dotenv';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -10,29 +10,11 @@ export const app: express.Application = express();
 
 import router from './api/router';
 
+app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('client/dist'));
 app.use('/api', router);
-
-const { Client } = require('pg');
-
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
-
-client.connect();
-
-client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
-  if (err) throw err;
-  for (const row of res.rows) {
-    console.log(JSON.stringify(row));
-  }
-  client.end();
-});
 
 app.use((err, req, res, next) => {
   console.log(err);
