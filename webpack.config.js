@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -20,22 +19,16 @@ module.exports = {
     rules: [
       {
         test: /\.html$/,
-        loader: 'html-loader'
+        loader: 'html-loader',
       },
       {
         test: /\.vue$/,
-        use: [
-          'vue-loader',
-          'eslint-loader',
-        ],
+        use: ['vue-loader', 'eslint-loader'],
       },
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: [
-          'babel-loader',
-          'eslint-loader',
-        ],
+        use: ['babel-loader', 'eslint-loader'],
       },
       {
         test: /\.(png|ttf|jpg|gif|svg|woff)$/,
@@ -55,9 +48,6 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, 'client'),
     },
-    modules: [
-      path.resolve(__dirname, 'node_modules'),
-      'node_modules',
-    ],
+    modules: [path.resolve(__dirname, 'node_modules'), 'node_modules'],
   },
 };
