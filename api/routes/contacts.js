@@ -1,6 +1,9 @@
 const express = require('express');
+
 const router = express.Router();
-const { Address, Contact, Phone, Email } = require('../models');
+const {
+  Address, Contact, Phone, Email,
+} = require('../models');
 
 /* GET contacts. */
 router.get('/', (req, res, next) => {
@@ -13,9 +16,9 @@ router.get('/', (req, res, next) => {
 router.post('/', (req, res, next) => {
   const { body } = req;
   let { phones, emails, addresses } = body;
+  console.log(body);
 
-  if (!(phones && phones.length)
-    || !(emails && emails.length)) {
+  if (!(phones && phones.length) || !(emails && emails.length)) {
     res.status(400).send('Please complete information');
   }
 
@@ -23,18 +26,18 @@ router.post('/', (req, res, next) => {
     firstName: body.firstName,
     lastName: body.lastName,
     birth: new Date(body.dob),
-  })
+  });
 
   addresses = addresses.map(address => new Address(address));
   phones = phones.map(phone => new Phone(phone));
   emails = emails.map(email => new Email(email));
 
-
   contact.addAddresses(addresses);
   contact.addPhones(phones);
   contact.addEmails(emails);
 
-  contact.store()
+  contact
+    .store()
     .then(() => res.status(201).send('Contact has been created'))
     .catch(err => next(err));
 });
@@ -63,9 +66,10 @@ router.post('/:id/phones', (req, res, next) => {
   const { id } = req.params;
   const { phone } = req.body;
   if (!id || !phone) res.status(400).send('Please complete information');
-  new Phone(phone).store(id)
+  new Phone(phone)
+    .store(id)
     .then(() => res.status(201).send('Phone has been added'))
-    .catch(err => next(err))
+    .catch(err => next(err));
 });
 
 /* POST address. */
@@ -73,9 +77,10 @@ router.post('/:id/addresses', (req, res, next) => {
   const { id } = req.params;
   const address = req.body;
   if (!id || !address) res.status(400).send('Please complete information');
-  new Address(address).store(id)
+  new Address(address)
+    .store(id)
     .then(() => res.status(201).send('Address has been added'))
-    .catch(err => next(err))
+    .catch(err => next(err));
 });
 
 /* POST email. */
@@ -83,9 +88,10 @@ router.post('/:id/emails', (req, res, next) => {
   const { id } = req.params;
   const { email } = req.body;
   if (!id || !email) res.status(400).send('Please complete information');
-  new Email(email).store(id)
+  new Email(email)
+    .store(id)
     .then(() => res.status(201).send('Email has been added'))
-    .catch(err => next(err))
+    .catch(err => next(err));
 });
 
 module.exports = router;

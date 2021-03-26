@@ -5,8 +5,8 @@ const pool = new Pool({
   ssl: process.env.NODE_ENV === 'production',
 });
 
-pool.on('error', function(err, client) {
-  console.error('idle client error', err.message, err.stack)
+pool.on('error', (err) => {
+  console.error('idle client error', err.message, err.stack);
 });
 
 module.exports = {
@@ -25,12 +25,12 @@ module.exports = {
               if (res.command === 'SELECT' && res.rowCount === 1) resolve(res.rows[0]);
               if (res.command === 'SELECT' && res.rowCount > 1) resolve(res.rows);
               resolve(res);
-            };
+            }
           });
         } finally {
           client.release();
         }
       });
     });
-  }
+  },
 };
