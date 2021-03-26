@@ -1,16 +1,7 @@
-import { Client } from 'pg';
-import { QueryResult } from 'pg';
-
-console.log(process.env.NODE_ENV);
+import { Client, QueryResult } from 'pg';
 
 const client: Client = new Client({
   connectionString: process.env.DATABASE_URL,
-  ssl:
-    process.env.NODE_ENV === 'production'
-      ? {
-          rejectUnauthorized: false,
-        }
-      : false,
 });
 
 client.connect((err) => {
@@ -19,10 +10,6 @@ client.connect((err) => {
   } else {
     console.log('connected');
   }
-});
-
-client.on('error', (err: Error) => {
-  throw err;
 });
 
 export const query = (text: string, params?: any[]): Promise<any[]> =>
