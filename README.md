@@ -1,20 +1,24 @@
 # Contacts
-Simple application for storing applications
 
-URL: https://contacts-hilton.herokuapp.com/
+Simple application for storing addresses
+
+URL: https://contacts-exlexer.herokuapp.com/
 
 ## Stack
 
 ### Persistance
- - PostgreSQL
+
+-   PostgreSQL
 
 ### API
- - Node.js
- - ExpressJS
- - Testing: Mocha/Supertest
+
+-   Node.js
+-   ExpressJS
+-   Testing: Mocha/Supertest
 
 ### Client
- - Vue.js
- - Webpack
- - ElementUI
- - Testing: Cypress
+
+-   Vue.js
+-   Webpack
+-   ElementUI
+-   Testing: Cypress

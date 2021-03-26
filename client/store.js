@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import api from '@/api';
 import { Message } from 'element-ui';
+
+import api from '@/api';
 
 Vue.use(Vuex);
 
@@ -45,10 +46,9 @@ export default new Vuex.Store({
     getContacts({ commit }) {
       const promise = api.get('contacts');
 
-      promise
-        .then(({ data }) => {
-          commit('UPDATE_CONTACTS', data);
-        });
+      promise.then(({ data }) => {
+        commit('UPDATE_CONTACTS', data);
+      });
 
       return promise;
     },
@@ -57,11 +57,10 @@ export default new Vuex.Store({
       const url = type === 'contacts' ? 'contacts' : `contacts/${id}/${type}`;
       const promise = api.post(url, data);
 
-      promise
-        .then(({ data: msg }) => {
-          Message.success(msg);
-          dispatch('getContacts');
-        });
+      promise.then(({ data: msg }) => {
+        Message.success(msg);
+        dispatch('getContacts');
+      });
 
       return promise;
     },
@@ -70,22 +69,20 @@ export default new Vuex.Store({
       const url = `${type}/${id}`;
       const promise = api.patch(url, data);
 
-      promise
-        .then(({ data: msg }) => {
-          Message.success(msg);
-          dispatch('getContacts');
-        });
+      promise.then(({ data: msg }) => {
+        Message.success(msg);
+        dispatch('getContacts');
+      });
 
       return promise;
     },
 
     deleteObject({ commit, dispatch }, { type, id }) {
-      api.delete(`${type}/${id}`)
-        .then(({ data: msg }) => {
-          Message.success(msg);
-          dispatch('getContacts');
-          if (type === 'contacts') commit('CLOSE_CONTACT', { id });
-        });
+      api.delete(`${type}/${id}`).then(({ data: msg }) => {
+        Message.success(msg);
+        dispatch('getContacts');
+        if (type === 'contacts') commit('CLOSE_CONTACT', { id });
+      });
     },
   },
 });
