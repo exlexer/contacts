@@ -1,9 +1,10 @@
 const { Pool } = require('pg');
 
-console.log(process.env.DATABASE_URL);
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production',
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 pool.on('error', (err) => {
@@ -14,11 +15,9 @@ module.exports = {
   query(text, params) {
     return new Promise((resolve, reject) => {
       pool.connect((err, client, done) => {
-        console.log(err);
         if (err) return reject(err);
         try {
           client.query(text, params, (error, res) => {
-            console.log(error);
             if (error) return reject(error);
 
             if (res.command === 'DELETE' && res.rowCount < 1) reject(new Error('no rows deleted'));

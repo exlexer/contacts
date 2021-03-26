@@ -49,25 +49,22 @@ class Contact {
   }
 
   store() {
-    return new Promise((resolve, reject) => {
-      const text = `
+    const text = `
         insert into contacts
           (first_name, last_name, birth)
         values ($1, $2, $3)
         returning id
       `;
 
-      const params = [this.firstName, this.lastName, this.birth];
+    const params = [this.firstName, this.lastName, this.birth];
 
-      db.query(text, params)
-        .then(({ id }) => Promise.all([
-          this._storeItems('addresses', id),
-          this._storeItems('phones', id),
-          this._storeItems('emails', id),
-        ]))
-        .then(() => resolve())
-        .catch(err => reject(err));
-    });
+    return db
+      .query(text, params)
+      .then(({ id }) => Promise.all([
+        this._storeItems('addresses', id),
+        this._storeItems('phones', id),
+        this._storeItems('emails', id),
+      ]));
   }
 
   static delete(id) {
@@ -116,4 +113,3 @@ class Contact {
 }
 
 module.exports = Contact;
-
