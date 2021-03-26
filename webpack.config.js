@@ -23,12 +23,12 @@ module.exports = {
       },
       {
         test: /\.vue$/,
-        use: ['vue-loader', 'eslint-loader'],
+        use: ['vue-loader'],
       },
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: ['babel-loader', 'eslint-loader'],
+        use: ['babel-loader'],
       },
       {
         test: /\.(png|ttf|jpg|gif|svg|woff)$/,

@@ -1,19 +1,10 @@
 module.exports = {
   root: true,
-  env: {
-    node: true
-  },
-  'extends': [
-    'plugin:vue/essential',
-    'airbnb'
+  parser: '@typescript-eslint/parser',
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
   ],
-  rules: {
-    'import/no-unresolved': 'off',
-    'no-param-reassign': 'off',
-    'no-unused-expressions': 'off',
-    'no-restricted-globals': 'off'
-  },
-  parserOptions: {
-    parser: 'babel-eslint'
-  }
-}
+  plugins: ['@typescript-eslint'],
+};

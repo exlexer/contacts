@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
+import Address from '../models/Address';
 
 const router = express.Router();
-const { Address } = require('../models');
 
 /* PATCH address. */
 router.patch('/:id', (req, res, next) => {
@@ -9,9 +9,9 @@ router.patch('/:id', (req, res, next) => {
   const { address } = req.body;
   if (!id || !address) res.status(400).send('Please complete information');
   Address.getById(id)
-    .then(found => found.update(address))
+    .then((found) => found.update(address))
     .then(() => res.status(200).send('Address has been updated'))
-    .catch(err => next(err));
+    .catch((err) => next(err));
 });
 
 /* DELETE address. */
@@ -20,7 +20,7 @@ router.delete('/:id', (req, res, next) => {
   if (!id) res.status(400).send('Please complete information');
   Address.delete(id)
     .then(() => res.status(200).send('Address has been deleted'))
-    .catch(err => next(err));
+    .catch((err) => next(err));
 });
 
-module.exports = router;
+export default router;
