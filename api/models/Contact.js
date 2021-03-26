@@ -27,25 +27,21 @@ class Contact {
   }
 
   update({ firstName, lastName, dob }) {
-    return new Promise((resolve, reject) => {
-      const text = `
+    const text = `
         update contacts set
           first_name = $1,
           last_name = $2,
           birth = $3
         where id = $4`;
 
-      const params = [
-        firstName || this.firstName,
-        lastName || this.lastName,
-        dob || this.dob,
-        this.id,
-      ];
+    const params = [
+      firstName || this.firstName,
+      lastName || this.lastName,
+      dob || this.dob,
+      this.id,
+    ];
 
-      db.query(text, params)
-        .then(() => resolve())
-        .catch(err => reject(err));
-    });
+    return db.query(text, params);
   }
 
   store() {
@@ -72,19 +68,17 @@ class Contact {
   }
 
   static getById(id) {
-    return new Promise((resolve, reject) => {
-      db.query(
+    return db
+      .query(
         'select first_name firstName, last_name lastName, birth dob from contacts where id = $1',
         [id],
       )
-        .then(contact => resolve(new Contact(contact, id)))
-        .catch(err => reject(err));
-    });
+      .then(contact => new Contact(contact, id));
   }
 
   static getAll() {
-    return new Promise((resolve, reject) => {
-      db.query(
+    return db
+      .query(
         `
         select array_to_json(array(select row_to_json(row) from (select
           c.first_name "firstName",
@@ -96,9 +90,7 @@ class Contact {
           array_to_json(array(select row_to_json(a) from (select * from addresses where contact_id = c.id) a)) addresses
         from contacts c) row)) "data"`,
       )
-        .then(({ data }) => resolve(data))
-        .catch(err => reject(err));
-    });
+      .then(({ data }) => data);
   }
 
   _storeItems(item, id) {
