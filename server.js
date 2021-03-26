@@ -1,6 +1,9 @@
 const express = require('express');
 const logger = require('morgan');
-require('dotenv').config();
+
+if (process.env.NODE_ENV === 'production') {
+  require('dotenv').config();
+}
 
 const app = express();
 
@@ -22,4 +25,3 @@ app.use((err, req, res, next) => {
 });
 
 module.exports = app;
-
